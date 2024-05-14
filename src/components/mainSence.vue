@@ -260,6 +260,11 @@ function init(container) {
         _this.longmendiao.diaocang = _this.longmendiao.getObjectByName('obj')//吊舱
         _this.longmendiao.diaogou = _this.longmendiao.getObjectByName('diaogou')//吊钩
 
+        //更新龙门吊模型矩阵，防止初始化时连线不正确
+        _this.longmendiao.traverse(function (child) {
+            child.updateMatrix()
+            child.updateMatrixWorld(true)
+        })
         drawLongmendiaoLine(_this.longmendiao)
         drawQizhongjiLine(_this.qizhongji)
 
@@ -269,6 +274,9 @@ function init(container) {
         _this.qizhongjiC.position.set(0, -10000, -0)
 
 
+        _this.gangkou.getObjectByName('longmendiao001').traverse(function (child) {child.updateMatrix();child.updateMatrixWorld(true)})
+        _this.gangkou.getObjectByName('longmendiao002').traverse(function (child) {child.updateMatrix();child.updateMatrixWorld(true)})
+        _this.gangkou.getObjectByName('longmendiao003').traverse(function (child) {child.updateMatrix();child.updateMatrixWorld(true)})
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao001'))
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao002'))
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao003'))
