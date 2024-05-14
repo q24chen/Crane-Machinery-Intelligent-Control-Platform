@@ -62,6 +62,7 @@ import TWEEN from '@tweenjs/tween.js';
 import UrlTileProvider from '../js/UrlTileProvider';
 import Base from '../js/Base';
 import Utils from '../js/Utils';
+import {Water} from '../js/effect/water/Water';
 
 //天空盒图片
 // import App  from '../../node_modules';
@@ -71,7 +72,6 @@ import top from '../assets/skybox/Cartoon Base NightSky_Cam_4_Up+Y.png'
 import bottom from '../assets/skybox/Cartoon Base NightSky_Cam_5_Down-Y.png'
 import backe from '../assets/skybox/Cartoon Base NightSky_Cam_1_Back-Z.png'
 import front from '../assets/skybox/Cartoon Base NightSky_Cam_0_Front+Z.png'
-import { VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16 } from 'three/examples/jsm/libs/ktx-parse.module';
 
 const _this = {}
 
@@ -214,7 +214,8 @@ function init(container) {
     _this.scene.add(map)
     map.updateMatrixWorld(true)
 
-    _this.initialCameraPosition = new THREE.Vector3(13217708.060187347, 226.1581925682878, -3780058.00969143)
+    _this.initialCameraPosition = new THREE.Vector3(13217647.683697764,81.3206523993604,-3780000.5982026584)
+    _this.initialCameraQuaternion = new THREE.Quaternion(-0.09935636840204319, -0.042352654847408355, -0.004232805302502573, 0.9941411610252363)
     _this.initialCameraLookPosition = new THREE.Vector3(13217785, 10, -3780141)
     _this.initialOrbitControlPosition = new THREE.Vector3(13217681.143300202, 9.983195200562477, -3780322.2190029044)
 
@@ -223,8 +224,8 @@ function init(container) {
 
 
     _this.camera.position.set(_this.initialCameraPosition.x, _this.initialCameraPosition.y, _this.initialCameraPosition.z)
-    _this.camera.lookAt(_this.initialCameraLookPosition.x, _this.initialCameraLookPosition.y, _this.initialCameraLookPosition.z);
-    // _this.camera.quaternion.set(-0.24347504414351884, -0.34533697302271027, -0.09326426827398515, 0.9015342778875031)
+    _this.camera.quaternion.set(_this.initialCameraQuaternion.x,_this.initialCameraQuaternion.y,_this.initialCameraQuaternion.z,_this.initialCameraQuaternion.w)
+    // _this.camera.lookAt(_this.initialCameraLookPosition.x, _this.initialCameraLookPosition.y, _this.initialCameraLookPosition.z);
     _this.oribitControl.target = new THREE.Vector3(_this.initialOrbitControlPosition.x, _this.initialOrbitControlPosition.y, _this.initialOrbitControlPosition.z)
 
     loadGangkou('model/gangkou11.glb', function (glb) {
@@ -283,6 +284,34 @@ function init(container) {
         drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji001'))
         drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji002'))
         drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji003'))
+
+        _this.waterMesh=_this.gangkou.getObjectByName('Obj3d66-1378886-358-212')
+        console.log(_this.waterMesh);
+        const water=new Water(_this.waterMesh.geometry,{
+            color: 0xffffff,
+            scale: 2,
+            flowDirection: new THREE.Vector2( 1, 1),
+            textureWidth: 1024*0.5,
+            textureHeight: 1024*0.5,
+            normal:new THREE.Vector3(0,1,0)
+        })
+        water.position.set(_this.waterMesh.position.x,_this.waterMesh.position.y+1,_this.waterMesh.position.z)
+        _this.gangkou.add(water)
+
+        const waterPlane=new THREE.Mesh(
+            _this.waterMesh.geometry.clone(),
+            new THREE.MeshBasicMaterial({
+                color:0x08304B,
+                opacity:1,
+                //transparent:true,
+                side: THREE.DoubleSide,
+                //depthTest:false
+                depthWrite:false
+            })
+        )
+        waterPlane.renderOrder=10000;
+        waterPlane.position.set(_this.waterMesh.position.x,_this.waterMesh.position.y+0.5,_this.waterMesh.position.z)
+        _this.gangkou.add(waterPlane);
     })
 
     // //加载模型
@@ -505,8 +534,8 @@ function flyToLongmendiao() {
 }
 function flyToInitialPosition() {
     _this.camera.position.set(_this.initialCameraPosition.x, _this.initialCameraPosition.y, _this.initialCameraPosition.z)
-    _this.camera.lookAt(_this.initialCameraLookPosition.x, _this.initialCameraLookPosition.y, _this.initialCameraLookPosition.z);
-    // _this.camera.quaternion.set(-0.24347504414351884, -0.34533697302271027, -0.09326426827398515, 0.9015342778875031)
+    _this.camera.quaternion.set(_this.initialCameraQuaternion.x,_this.initialCameraQuaternion.y,_this.initialCameraQuaternion.z,_this.initialCameraQuaternion.w)
+    // _this.camera.lookAt(_this.initialCameraLookPosition.x, _this.initialCameraLookPosition.y, _this.initialCameraLookPosition.z);
     _this.oribitControl.target = new THREE.Vector3(_this.initialOrbitControlPosition.x, _this.initialOrbitControlPosition.y, _this.initialOrbitControlPosition.z)
 
     // const position = new THREE.Vector3(13218094, 189, -3781134)
