@@ -154,6 +154,10 @@ function init(container) {
                     content: '34.0',
                 },
             ]
+
+            qzjIntersect.object.material=qzjIntersect.object.material.clone()
+            qzjIntersect.object.material.transparent = true
+            qzjIntersect.object.material.opacity = 0.5
         }
         const lmdIntersect = Utils.getIntersectByMouse(container, _this.camera, event, _this.longmendiao, true)
         if (lmdIntersect) {
@@ -179,6 +183,10 @@ function init(container) {
                     content: '78.0',
                 },
             ]
+
+            lmdIntersect.object.material=qzjIntersect.object.material.clone()
+            lmdIntersect.object.material.transparent = true
+            lmdIntersect.object.material.opacity = 0.5
         }
     })
 
@@ -217,7 +225,7 @@ function init(container) {
     _this.initialCameraPosition = new THREE.Vector3(13217647.683697764,81.3206523993604,-3780000.5982026584)
     _this.initialCameraQuaternion = new THREE.Quaternion(-0.09935636840204319, -0.042352654847408355, -0.004232805302502573, 0.9941411610252363)
     _this.initialCameraLookPosition = new THREE.Vector3(13217785, 10, -3780141)
-    _this.initialOrbitControlPosition = new THREE.Vector3(13217681.143300202, 9.983195200562477, -3780322.2190029044)
+    _this.initialOrbitControlPosition = new THREE.Vector3(13217681.143300202, 11, -3780322.2190029044)
 
     _this.initialLongmendiaoPosition = new THREE.Vector3(13217630, 10, -3780348)
     _this.initialQizhongjiPosition = new THREE.Vector3(13217740, 10, -3780310)
@@ -281,8 +289,10 @@ function init(container) {
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao001'))
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao002'))
         drawLongmendiaoLine(_this.gangkou.getObjectByName('longmendiao003'))
-        drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji001'))
-        drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji002'))
+        _this.gangkou.remove(_this.gangkou.getObjectByName('qizhongji001'))
+        _this.gangkou.remove(_this.gangkou.getObjectByName('qizhongji002'))
+        // drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji001'))
+        // drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji002'))
         drawQizhongjiLine(_this.gangkou.getObjectByName('qizhongji003'))
 
         _this.waterMesh=_this.gangkou.getObjectByName('Obj3d66-1378886-358-212')
@@ -298,20 +308,29 @@ function init(container) {
         water.position.set(_this.waterMesh.position.x,_this.waterMesh.position.y+1,_this.waterMesh.position.z)
         _this.gangkou.add(water)
 
-        const waterPlane=new THREE.Mesh(
-            _this.waterMesh.geometry.clone(),
-            new THREE.MeshBasicMaterial({
-                color:0x08304B,
-                opacity:1,
-                //transparent:true,
-                side: THREE.DoubleSide,
-                //depthTest:false
-                depthWrite:false
-            })
-        )
-        waterPlane.renderOrder=10000;
-        waterPlane.position.set(_this.waterMesh.position.x,_this.waterMesh.position.y+0.5,_this.waterMesh.position.z)
-        _this.gangkou.add(waterPlane);
+        // const waterPlane=new THREE.Mesh(
+        //     _this.waterMesh.geometry.clone(),
+        //     new THREE.MeshBasicMaterial({
+        //         color:0x08304B,
+        //         opacity:1,
+        //         //transparent:true,
+        //         side: THREE.DoubleSide,
+        //         //depthTest:false
+        //         depthWrite:false
+        //     })
+        // )        
+        // waterPlane.renderOrder=10000;
+        // waterPlane.position.set(_this.waterMesh.position.x,_this.waterMesh.position.y+0.5,_this.waterMesh.position.z)
+        // _this.gangkou.add(waterPlane);
+        _this.waterMesh.material= new THREE.MeshBasicMaterial({
+            color:0x08304B,
+            opacity:1,
+            //transparent:true,
+            side: THREE.DoubleSide,
+            //depthTest:false
+            depthWrite:false
+        })
+
     })
 
     // //加载模型
@@ -574,6 +593,7 @@ function flyToInitialPosition() {
 
 //动画
 function qizhongjiAnimation() {
+    flyToQizhongji()
     //钩爪下降
     animation(_this.qizhongji.gouzhua, 'move', 'z', 'qizhongji', 0, 12, 1, function () {
         setTimeout(function () {
@@ -640,6 +660,7 @@ function qizhongjiAnimation() {
     //     .start();
 }
 function longmendiaoAnimation() {
+    flyToLongmendiao()
     const point0 = new THREE.Vector3(13217672.206212798, 10.51653706095459, -3780331.115404205)
     const point1 = new THREE.Vector3(13217584.297401546, 10.448353352546064, -3780231.02575377)
     const direction = point1.clone().sub(point0).normalize()
@@ -678,6 +699,7 @@ function qizhongjiWarning() {
     if (_this.nowWarningObject != null) {
         removeWarning()
     }
+    removeInformation()
 
     _this.nowWarningObject = _this.qizhongji.dizuo
     _this.nowWarningObject.traverse(function (child) {
@@ -713,6 +735,7 @@ function longmendiaoWarning() {
     if (_this.nowWarningObject != null) {
         removeWarning()
     }
+    removeInformation()
 
     _this.nowWarningObject = _this.longmendiao.diaogou
     _this.nowWarningObject.traverse(function (child) {
@@ -958,7 +981,7 @@ function highLight(group) {
     //改变group的材质
     group.traverse(function (child) {
         if (child.isMesh) {
-            child.material = breathOpacity2
+            child.material = breathOpacity1
         }
     })
 }
@@ -967,22 +990,31 @@ const breathOpacity1 = new THREE.ShaderMaterial({
         opacity: { value: 1.0 }
     },
     vertexShader: `
+    //使用内部着色器块增强自定义着色器(三个include,片元着色器同理),解决开启对数深度缓冲区导致的ShaderMaterial渲染错误问题
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+
     varying vec3 vColor;
     void main(){
         vColor = color;
         gl_Position = projectionMatrix*modelViewMatrix*vec4( position, 1.0 );
+        #include <logdepthbuf_vertex>
     }
     `,
     fragmentShader: `
+    #include <common>
+    #include <logdepthbuf_pars_fragment>
         uniform float opacity;
         varying vec3 vColor;
         void main(){
-            gl_FragColor=vec4(vColor,1.0);
-            // gl_FragColor=vec4(1.0,0.0,0.0,opacity);
+            #include <logdepthbuf_fragment>
+            gl_FragColor=vec4(1.0,0.0,0.0,opacity);
         }
     `,
-    side: THREE.DoubleSide,//双面显示 
+    // side: THREE.DoubleSide,//双面显示 
     vertexColors: true,//允许设置使用顶点颜色渲染
+    transparent: true,
+    fog: true,
 })
 let breathOpacity2 = new THREE.MeshLambertMaterial({
     emissive: 0xff0000,
