@@ -1,5 +1,6 @@
 <template>
     <div ref="container" id="scene"></div>
+    <dismanteAndInstallVue id="dismanteAndInstallVue" v-if="newDAI" @close="newDAI=false"/>
     <div id="controlTools">
         <div id="show">
             <el-button type="primary" @click="reinitScene">展示场景</el-button>
@@ -17,7 +18,8 @@
             <el-button type="primary" @click="longmendiaoWarning">龙门吊告警</el-button>
         </div>
         <div id="demonstrate">
-            <el-button type="primary" @click="dismanteAndInstall">龙门吊拆解安装</el-button>
+            <el-button type="primary" @click="dismanteAndInstall">龙门吊拆解安装1</el-button>
+            <el-button type="primary" @click="newDismanteAndInstall">龙门吊拆解安装2</el-button>
             <el-button type="primary">推演展示</el-button>
         </div>
 
@@ -63,6 +65,8 @@ import UrlTileProvider from '../js/UrlTileProvider';
 import Base from '../js/Base';
 import Utils from '../js/Utils';
 import {Water} from '../js/effect/water/Water';
+
+import dismanteAndInstallVue from './dismanteAndInstall.vue';
 
 //天空盒图片
 // import App  from '../../node_modules';
@@ -833,6 +837,10 @@ function dismanteAndInstall() {
     }, 3000);
 
 }
+const newDAI=ref(false)
+function newDismanteAndInstall() {
+    newDAI.value=true
+}
 
 function animation(group, type1, type2, parent, position0, position1, time, callback) {
     let count = time * 100, stepTime = 10, interval
@@ -1138,6 +1146,13 @@ onMounted(() => {
 #scene {
     width: 100%;
     height: 100%;
+}
+#dismanteAndInstallVue{
+    position: absolute;
+    width: 800px;
+    height: 600px;
+    top: calc(50% - 300px);
+    left: calc(50% - 400px);
 }
 
 #controlTools {
