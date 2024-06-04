@@ -12,9 +12,11 @@
     "@tweenjs/tween.js": "^23.1.1",
     "element-plus": "^2.4.3",
     "geo-three": "^0.1.14",
+    "pinia": "^2.1.7",
     "three": "^0.156.0",
     "tween": "^0.9.0",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

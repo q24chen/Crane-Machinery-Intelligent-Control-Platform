@@ -248,6 +248,12 @@ function init(container) {
         const meshAxesHelper0 = new THREE.AxesHelper(50);
         _this.gangkou.add(meshAxesHelper0)
 
+        _this.scene.traverse(function (child){
+            if (child.isMesh) {
+                child.castShadow = true
+                child.receiveShadow = true
+            }
+        })
 
         const meshAxesHelper1 = new THREE.AxesHelper(50);
         const meshAxesHelper2 = new THREE.AxesHelper(50);
@@ -521,7 +527,7 @@ function cameraFly(cameraTarget, oribitControlTarget,) {
             _this.camera.position.set(obj.x, obj.y, obj.z);
             // 动态计算相机视线
             _this.oribitControl.target.set(obj.lx, obj.ly, obj.lz)
-
+            _this.oribitControl.update();//强制更新，去除画面抖动
         })
         .start();
 }
@@ -1031,20 +1037,32 @@ let breathOpacity2 = new THREE.MeshLambertMaterial({
     opacity: 1.0
 })
 
-let add = false, opacity = 1.0
-function opacityChange(deltaTime) {
 
-    if (!add) {
+let opacityAdd = false,timeAdd=true, opacity = 1.0,time=0.0
+function uniformChange(deltaTime) {
+    if (!opacityAdd) {
         opacity = opacity - deltaTime
         if (opacity <= 0.3) {
-            add = true
+            opacityAdd = true
         }
     }
     else {
         opacity = opacity + deltaTime
         if (opacity >= 0.9) {
-            add = false
+            opacityAdd = false
         }
+    }
+
+    if(timeAdd){
+        time=time+deltaTime*10
+        if(time>=30.0){
+            timeAdd=false
+        }
+    }
+    else{
+        time=0.0
+        timeAdd=true
+
     }
 }
 
@@ -1116,10 +1134,13 @@ _this.deltaTime = 0.0
 function render() {
     _this.deltaTime = _this.clock.getDelta()
 
-    opacityChange(_this.deltaTime)
+    uniformChange(_this.deltaTime)
     if (breathOpacity1 && breathOpacity2) {
         breathOpacity1.uniforms.opacity.value = opacity
         breathOpacity2.opacity = opacity
+    }
+    if(scanEffect){
+        scanEffect.uniforms.time.value=time
     }
 
     TWEEN.update();
