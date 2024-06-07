@@ -9,7 +9,7 @@
             </div>
         </div>
         <div id="animation">
-            <el-button type="primary" @click="qizhongjiAnimation">起重机动画</el-button>
+            <el-button type="primary" @click="qizhongjiAnimation">起画</el-button>
             <el-button type="primary" @click="longmendiaoAnimation">龙门吊动画</el-button>
         </div>
         <div id="warning">
