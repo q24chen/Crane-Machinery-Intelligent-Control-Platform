@@ -1,29 +1,39 @@
 <template>
     <div ref="container" id="scene"></div>
     <dismanteAndInstallVue id="dismanteAndInstallVue" v-if="newDAI" @close="newDAI=false"/>
-    <div id="controlTools">
+    <div id="controlTools" v-if="controlToolsVisible">
+        <!-- <div class="console"> 控制台 </div> -->
         <div id="show">
-            <el-button type="primary" @click="reinitScene">展示场景</el-button>
+            <el-button type="primary"  @click="reinitScene">展示场景</el-button>
             <div id="showEquipment">
-                <el-button type="primary" @click="flyToQizhongji">展示起重机</el-button>
-                <el-button type="primary" @click="flyToLongmendiao">展示龙门吊</el-button>
+                <el-button type="primary"  @click="flyToQizhongji">展示起重机</el-button>
+                <el-button type="primary"  @click="flyToLongmendiao">展示龙门吊</el-button>
             </div>
         </div>
         <div id="animation">
-            <el-button type="primary" @click="qizhongjiAnimation">起重机动画</el-button>
-            <el-button type="primary" @click="longmendiaoAnimation">龙门吊动画</el-button>
+            <el-button type="primary"   @click="qizhongjiAnimation">起重机动画</el-button>
+            <el-button type="primary"   @click="longmendiaoAnimation">龙门吊动画</el-button>
         </div>
         <div id="warning">
-            <el-button type="primary" @click="qizhongjiWarning">起重机告警</el-button>
-            <el-button type="primary" @click="longmendiaoWarning">龙门吊告警</el-button>
+            <el-button type="primary"  @click="qizhongjiWarning">起重机告警</el-button>
+            <el-button type="primary"  @click="longmendiaoWarning">龙门吊告警</el-button>
         </div>
         <div id="demonstrate">
-            <el-button type="primary" @click="dismanteAndInstall">龙门吊拆解安装1</el-button>
-            <el-button type="primary" @click="newDismanteAndInstall">龙门吊拆解安装2</el-button>
-            <el-button type="primary">推演展示</el-button>
+            <el-button type="primary"  @click="dismanteAndInstall">龙门吊拆解安装1</el-button>
+            <el-button type="primary"  @click="newDismanteAndInstall">龙门吊拆解安装2</el-button>
+            <el-button type="primary"  >推演展示</el-button>
+        </div>
+
+        <div id="collapse" >
+             <el-button icon="CircleClose"  type="primary" @click="toggleControlTools" >关闭控制台</el-button>
         </div>
 
     </div>
+
+    <div id="openControlTools" v-else>
+        <el-button icon="Expand" type="primary" @click="toggleControlTools">打开控制台</el-button>
+    </div>
+
     <div id="info">
         <div id="warningInfo" v-show="warningCheck">
             <div class="title">告警信息</div>
@@ -44,7 +54,7 @@
     </div>
 </template>
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect, createApp } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -918,7 +928,6 @@ function animation(group, type1, type2, parent, position0, position1, time, call
                 const diaoxian = _this.longmendiao.getObjectByName('吊线')
                 if (diaoxian) {
                     diaoxian.parent.remove(diaoxian)
-
                     drawLongmendiaoLine(_this.longmendiao)
                 }
             }
@@ -1139,9 +1148,7 @@ function render() {
         breathOpacity1.uniforms.opacity.value = opacity
         breathOpacity2.opacity = opacity
     }
-    if(scanEffect){
-        scanEffect.uniforms.time.value=time
-    }
+
 
     TWEEN.update();
 
@@ -1162,6 +1169,11 @@ onMounted(() => {
     init(container.value)
 })
 
+const controlToolsVisible = ref(false); //展示控制台
+function toggleControlTools() {
+    controlToolsVisible.value = !controlToolsVisible.value;
+}
+
 </script>
 <style scoped lang="less">
 #scene {
@@ -1178,16 +1190,25 @@ onMounted(() => {
 
 #controlTools {
     position: absolute;
-    top: 0;
+    top: 20px;
     left: 0;
-    width: 240px;
+    width: 260px;
     height: fit-content;
     z-index: 100;
     display: flex;
     flex-direction: column;
+    background-image: url('../assets/blank.png'); 
+    background-size: 100% 100%;
+    // opacity: 0.5;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    padding-left: 9px;
+    // opacity: 0.8;
+    // background-position: 20000000px center;
+    // padding-left: 30px;
 
     #show,
-    #demonstrate {
+    #demonstrate, #collapse {
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -1196,6 +1217,7 @@ onMounted(() => {
             width: 220px;
             margin-top: 5px;
             margin-left: 10px;
+            opacity: 0.8;
         }
     }
 
@@ -1210,9 +1232,45 @@ onMounted(() => {
             width: 105px;
             margin-top: 5px;
             margin-left: 10px;
+            opacity: 0.8;
+            // background-color:transparent;
         }
 
     }
+}
+
+#openControlTools {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 260px;
+    height: fit-content;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 9px;
+    // background-image: url('../assets/blank.png'); 
+    background-size: 100% 100%;
+    // opacity: 0.5;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    padding-left: 9px;
+        .el-button {
+            width: 220px;
+            margin-top: 5px;
+            margin-left: 10px;
+            opacity: 0.8;
+            // background-color:transparent;
+        }
+}
+
+#controlTools .el-button {
+    // color:black;
+    // font-weight: 100;
+    border-width: 2px; /* 边框大小 */
+    border-color: #11caea; /* 边框颜色 */
 }
 
 #info {
@@ -1271,6 +1329,7 @@ onMounted(() => {
             cursor: pointer;
         }
     }
+
 
 }
 </style>
