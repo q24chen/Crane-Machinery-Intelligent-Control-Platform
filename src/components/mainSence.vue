@@ -1,6 +1,26 @@
+
 <template>
-    <div ref="container" id="scene"></div>
+        <!-- <div class = "myContainer"> <infoBoard></infoBoard> </div> -->
+    <div ref="container" id="scene" ></div>
     <dismanteAndInstallVue id="dismanteAndInstallVue" v-if="newDAI" @close="newDAI=false"/>
+    <div id = "leftbg" v-if = "showDashBoard"></div>
+    <div id = "rightbg" v-if = "showDashBoard"></div>
+    <div id = "shebeikanban" v-if = "showDashBoard"> </div>
+    <div id = "kanbanneirong" v-if = "showDashBoard"> 
+        <div class="arrow" id = "arrowone"></div>
+        <h2 id="kanban">设备看板</h2>
+        <div class="arrow" id = "arrowtwo"></div>
+        <table id="dashboard">
+  <tr v-for="(entry, index) in entries" :key="index" v-if = "showDashBoard">
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.name }}</td>
+    <td>{{ entry.status }}</td>
+  </tr>
+        </table>
+    </div>
+    <div id="zhikongpingtai" v-if = "showDashBoard"> 
+        <h2>起重机械数字孪生智控平台</h2>
+    </div>
     <div id="controlTools" v-if="controlToolsVisible">
         <!-- <div class="console"> 控制台 </div> -->
         <div id="show">
@@ -21,7 +41,7 @@
         <div id="demonstrate">
             <el-button type="primary"  @click="dismanteAndInstall">龙门吊拆解安装1</el-button>
             <el-button type="primary"  @click="newDismanteAndInstall">龙门吊拆解安装2</el-button>
-            <el-button type="primary"  >推演展示</el-button>
+            <el-button type="primary"  @click="adjustDash">{{ dynamicButton }}</el-button>
         </div>
 
         <div id="collapse" >
@@ -29,10 +49,60 @@
         </div>
 
     </div>
-
     <div id="openControlTools" v-else>
-        <el-button icon="Expand" type="primary" @click="toggleControlTools">打开控制台</el-button>
+        <el-button icon="Expand" type="primary" id="abutton" @click="toggleControlTools">打开控制台</el-button>
     </div>
+
+    <div id = "yunweizhuangtai" v-if = "showDashBoard">
+        <h2>运维状态</h2>
+    </div>
+
+    <div id="dataone" v-if = "showDashBoard"> <h4>数据一</h4> </div>
+    <div id="plotone" v-if = "showDashBoard"> </div>
+
+    <div id="datatwo" v-if = "showDashBoard"> <h4>数据二</h4> </div>
+    <div id="plottwo" v-if = "showDashBoard"> </div>
+
+    <div id="datathree" v-if = "showDashBoard"> <h4>数据三</h4> </div>
+    <div id="plotthree" v-if = "showDashBoard"> </div>
+
+
+    <div id="yunweifenxi" v-if = "!controlToolsVisible && showDashBoard">
+        <h2>运维数据分析</h2>
+    </div>
+
+    <div id="datafour" v-if = "!controlToolsVisible && showDashBoard"> <h4>数据一</h4></div>
+    <div id="plotfour" v-if = "!controlToolsVisible && showDashBoard"> </div>
+    
+    <div id="datafive" v-if = "showDashBoard"> <h4>数据二</h4> </div>
+    <div id="plotfive" v-if = "showDashBoard"> </div>
+
+    <div id="datasix" v-if = "showDashBoard"> <h4>数据三</h4> </div>
+    <div id="plotsix" v-if = "showDashBoard"> </div>
+
+ 
+    <div v-if="showInfoBoard" class="myInfoBoard" :style="{ top: `${infoBoardPosition.y - 440}px`, left: `${infoBoardPosition.x - 50}px` }">
+        <infoBoard></infoBoard>
+        <el-button @click="closeInfoBoard" class="close-button1" icon="CircleClose"></el-button>
+    </div>
+
+    <div v-if="showInfoBoard3" class="myInfoBoard" :style="{ top: `${infoBoardPosition.y - 440}px`, left: `${infoBoardPosition.x - 50}px` }">
+        <infoBoard3></infoBoard3>
+        <el-button @click="closeInfoBoard" class="close-button2" icon="CircleClose"></el-button>
+    </div>
+
+
+    <div v-if="showInfoBoard2" class="myInfoBoard" :style="{ top: `${infoBoardPosition2.y - 440}px`, left: `${infoBoardPosition2.x - 50}px` }">
+        <infoBoard2></infoBoard2>
+        <el-button @click="closeInfoBoard2" class="close-button1" icon="CircleClose"></el-button>
+    </div>
+
+     <div v-if="showInfoBoard4" class="myInfoBoard" :style="{ top: `${infoBoardPosition2.y - 440}px`, left: `${infoBoardPosition2.x - 50}px` }">
+        <infoBoard4></infoBoard4>
+        <el-button @click="closeInfoBoard2" class="close-button2" icon="CircleClose"></el-button>
+    </div>
+
+
 
     <div id="info">
         <div id="warningInfo" v-show="warningCheck">
@@ -43,14 +113,14 @@
                 <el-table-column prop="content" />
             </el-table>
         </div>
-        <div id="equipmentInfo" v-show="equipmentInfoCheck">
-            <div class="title">设备信息</div>
-            <div class="close" @click="closeText('equipmentInfo')">×</div>
-            <el-table :data="equipmentInfo" border style="width: 100%" :show-header="false">
-                <el-table-column prop="type" />
-                <el-table-column prop="content" />
-            </el-table>
-        </div>
+        <!-- </div id="equipmentInfo" v-show="equipmentInfoCheck"> -->
+            <!-- <div class="title">设备信息</div> -->
+            <!-- <div class="close" @click="closeText('equipmentInfo')">×</div> -->
+            <!-- <el-table :data="equipmentInfo" border style="width: 100%" :show-header="false"> -->
+                <!-- <el-table-column prop="type" /> -->
+                <!-- <el-table-column prop="content" /> -->
+            <!-- </el-table> -->
+        <!-- </> -->
     </div>
 </template>
 <script setup>
@@ -86,6 +156,47 @@ import top from '../assets/skybox/Cartoon Base NightSky_Cam_4_Up+Y.png'
 import bottom from '../assets/skybox/Cartoon Base NightSky_Cam_5_Down-Y.png'
 import backe from '../assets/skybox/Cartoon Base NightSky_Cam_1_Back-Z.png'
 import front from '../assets/skybox/Cartoon Base NightSky_Cam_0_Front+Z.png'
+import infoBoard from './infoBoard.vue';
+import infoBoard2 from './infoBoard2.vue';
+import infoBoard3 from './infoBoard3.vue';
+import infoBoard4 from './infoBoard4.vue';
+
+const showInfoBoard = ref(false);
+const showInfoBoard3 = ref(false);
+const infoBoardPosition = ref({ x: 0, y: 0 });
+function closeInfoBoard() {
+    showInfoBoard.value = false;
+    showInfoBoard3.value = false;
+}
+
+const showInfoBoard2 = ref(false);
+const showInfoBoard4 = ref(false);
+const infoBoardPosition2 = ref({ x: 0, y: 0 });
+function closeInfoBoard2() {
+    showInfoBoard2.value = false;
+    showInfoBoard4.value = false;
+}
+
+const showDashBoard = ref(true);
+const dynamicButton = ref('');
+function adjustDash() {
+    showDashBoard.value = !showDashBoard.value;
+    dynamicButton.value = showDashBoard.value ? '关闭设备面板' : '打开设备面板';
+}
+
+
+
+
+const entries = ref([
+  { time: new Date().toLocaleString('zh-CN', { hour12: false }), name: '门座起重机1号', status: '设备作业中' },
+  { time: new Date().toLocaleString('zh-CN', { hour12: false }), name: '门座起重机2号', status: '设备作业中' },
+  { time: new Date().toLocaleString('zh-CN', { hour12: false }), name: '门座起重机3号', status: '设备作业中' },
+]);
+
+
+
+
+
 
 const _this = {}
 
@@ -132,6 +243,8 @@ function init(container) {
             console.log(_this.camera);
             Utils.getCameraInfo(_this.camera)
         }
+        closeInfoBoard();
+        closeInfoBoard2();
     })
     container.addEventListener('click', function (event) {
         event.preventDefault();
@@ -157,7 +270,6 @@ function init(container) {
                 {
                     type: '型号：',
                     content: 'DB-QZJ-34Dfa',
-
                 },
                 {
                     type: '设备编号：',
@@ -172,6 +284,13 @@ function init(container) {
             qzjIntersect.object.material=qzjIntersect.object.material.clone()
             qzjIntersect.object.material.transparent = true
             qzjIntersect.object.material.opacity = 0.5
+            // showInfoBoard.value = true; // 显示 infoBoard
+            infoBoardPosition.value = { x: event.clientX, y: event.clientY };
+            if (event.clientY < 450) {
+                showInfoBoard3.value = true;
+            } else {
+                showInfoBoard.value = true;
+            }
         }
         const lmdIntersect = Utils.getIntersectByMouse(container, _this.camera, event, _this.longmendiao, true)
         if (lmdIntersect) {
@@ -198,9 +317,16 @@ function init(container) {
                 },
             ]
 
-            lmdIntersect.object.material=qzjIntersect.object.material.clone()
+            lmdIntersect.object.material=lmdIntersect.object.material.clone()
             lmdIntersect.object.material.transparent = true
             lmdIntersect.object.material.opacity = 0.5
+            infoBoardPosition2.value = { x: event.clientX, y: event.clientY };
+
+            if (event.clientY < 450) {
+                showInfoBoard4.value = true;
+            } else {
+                showInfoBoard2.value = true;
+            }
         }
     })
 
@@ -1167,11 +1293,23 @@ function renderHighLight() {
 const container = ref(null)//场景容器元素
 onMounted(() => {
     init(container.value)
+    const updateTime = () => {
+    const currentTime = new Date().toLocaleString('zh-CN', { hour12: false });
+    entries.value.forEach(entry => {
+      entry.time = currentTime;
+    });
+  };
+  
+  updateTime(); // 初始调用
+  const intervalId = setInterval(updateTime, 1000); // 每秒更新一次
+
 })
+
 
 const controlToolsVisible = ref(false); //展示控制台
 function toggleControlTools() {
     controlToolsVisible.value = !controlToolsVisible.value;
+    dynamicButton.value = showDashBoard.value ? '关闭设备面板' : '打开设备面板';
 }
 
 </script>
@@ -1180,6 +1318,31 @@ function toggleControlTools() {
     width: 100%;
     height: 100%;
 }
+
+
+    #myInfoBoard {
+        // position: absolute;
+        z-index: 5;
+        top: 1000px;
+        // transition: all 10.3s ease-out;
+    }
+
+    .close-button1 {
+        position: absolute;
+        top: 10px;
+        left: 300px;
+        z-index: 10;
+        opacity: 0.6;
+    }
+
+    .close-button2{
+        position: absolute;
+        top: 605px;
+        left: -20px;
+        z-index: 10;
+        opacity: 0.6;
+    }
+
 #dismanteAndInstallVue{
     position: absolute;
     width: 800px;
@@ -1188,10 +1351,268 @@ function toggleControlTools() {
     left: calc(50% - 400px);
 }
 
+#shebeikanban{
+    position: absolute;
+    background-color: rgba(35, 99, 163, 0.5); 
+    bottom: 0;
+    left: 520px;
+    width: 600px;
+    height: 200px;
+}
+
+#kanbanneirong{
+    position: absolute;
+    bottom: 0;
+    left: 520px;
+    width: 600px;
+    height: 200px;
+    color:white;
+}
+.arrow{
+    position: absolute;
+    top:5px;
+    height:25px;
+    width:70px;
+}
+table, th, td {
+    border: 1px solid rgb(14, 158, 230);
+    border-collapse: collapse;
+    height: 50px;
+    width: 600px;
+    text-align: left;
+    font-size: 16px;
+}
+#dashboard{
+    position: absolute;
+    top:40px;
+    left:0;    
+}
+#arrowone {
+    left:355px;
+    background-image: url('../assets/left.png');
+}
+
+#kanban {
+    position:absolute;
+    left:250px;
+}
+#arrowtwo{
+    left:175px;
+    background-image: url('../assets/right.png');
+}
+#leftbg{
+    position: absolute;
+    top: 80px;
+    width: 350px;
+    height: 815px;
+    background-image: url('../assets/content_left.png'); 
+    background-size: 100% 100%;
+}
+
+#rightbg{
+    position: absolute;
+    top: 80px;
+    right: 0;
+    width: 350px;
+    height: 815px;
+    background-image: url('../assets/content_right.png'); 
+    background-size: 100% 100%;
+}
+
+#zhikongpingtai{
+    position: absolute;
+    top: 0;
+    width: 1200px;
+    height: 70px;
+    // opacity: 0.5;
+    background-image: url('../assets/parkHeader.png'); 
+    background-size: 100% 100%;
+    padding-top: 5px;
+    padding-left: 5px;
+    color: white;
+}
+
+#yunweizhuangtai{
+    position: absolute;
+    top: 80px;
+    width: 300px;
+    height: 40px;
+    // opacity: 0.5;
+    background-image: url('../assets/station_bg.png'); 
+    background-size: 100% 100%;
+    padding-top: 5px;
+    padding-left: 5px;
+    color: white;
+    padding-left: 50px;
+    display: flex;
+    align-items: center; 
+    padding-bottom:5px;
+}
+
+#dataone{
+    position: absolute;
+    top: 140px;
+    width: 300px;
+    height: 30px;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plotone{
+    position: absolute;
+    top: 175px;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-1.png'); 
+    background-size: 100% 100%;
+}
+
+#datatwo{
+    position: absolute;
+    top: 360px;
+    width: 300px;
+    height: 30px;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plottwo{
+    position: absolute;
+    top: 395px;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-2.png'); 
+    background-size: 100% 100%;
+}
+
+#datathree{
+    position: absolute;
+    top: 580px;
+    width: 300px;
+    height: 30px;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plotthree{
+    position: absolute;
+    top: 615px;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-3.png'); 
+    background-size: 100% 100%;
+}
+
+
+
+#yunweifenxi{
+    position: absolute;
+    top: 80px;
+    left: 1360px;
+    width: 300px;
+    height: 40px;
+    // opacity: 0.5;
+    background-image: url('../assets/station_bg.png'); 
+    background-size: 100% 100%;
+    padding-top: 5px;
+    padding-left: 5px;
+    color: white;
+    padding-left: 50px;
+    display: flex;
+    align-items: center; 
+    padding-bottom:5px;
+}
+
+#datafour{
+    position: absolute;
+    top: 140px;
+    right:0;
+    width: 300px;
+    height: 30px;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plotfour{
+    position: absolute;
+    top: 175px;
+    right:0;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-4.png'); 
+    background-size: 100% 100%;
+}
+
+#datafive{
+    position: absolute;
+    top: 360px;
+    width: 300px;
+    height: 30px;
+    right:0;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plotfive{
+    position: absolute;
+    top: 395px;
+    right:0;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-5.png'); 
+    background-size: 100% 100%;
+}
+
+#datasix{
+    position: absolute;
+    top: 580px;
+    right:0;
+    width: 300px;
+    height: 30px;
+    // padding-top: 1px;
+    padding-left: 30px;
+    background-image: url('../assets/meeting.png'); 
+    background-size: 100% 100%;
+    color: white;
+}
+
+#plotsix{
+    position: absolute;
+    top: 615px;
+    right:0;
+    width: 300px;
+    height: 120px;
+    padding-left: 30px;
+    background-image: url('../assets/data1-6.png'); 
+    background-size: 100% 100%;
+}
+
+
+
 #controlTools {
     position: absolute;
-    top: 20px;
-    left: 0;
+    top: 10px;
+    left: 1400px;
     width: 260px;
     height: fit-content;
     z-index: 100;
@@ -1235,14 +1656,13 @@ function toggleControlTools() {
             opacity: 0.8;
             // background-color:transparent;
         }
-
     }
 }
 
 #openControlTools {
     position: absolute;
-    top: 20px;
-    left: 0;
+    top: 0;
+    left: 1400px;
     width: 260px;
     height: fit-content;
     z-index: 100;
@@ -1251,20 +1671,15 @@ function toggleControlTools() {
     padding-top: 10px;
     padding-bottom: 20px;
     padding-left: 9px;
-    // background-image: url('../assets/blank.png'); 
+    // background-image: url('../assets/park_selectedBtn.png'); 
     background-size: 100% 100%;
     // opacity: 0.5;
     padding-top: 20px;
     padding-bottom: 30px;
     padding-left: 9px;
-        .el-button {
-            width: 220px;
-            margin-top: 5px;
-            margin-left: 10px;
-            opacity: 0.8;
-            // background-color:transparent;
-        }
 }
+
+
 
 #controlTools .el-button {
     // color:black;
@@ -1329,7 +1744,24 @@ function toggleControlTools() {
             cursor: pointer;
         }
     }
-
-
 }
+
+
+.myInfoBoard {
+    position: absolute;
+    z-index: 5;
+}
+
+#abutton {
+    width: 150px;
+    height: 30px;
+    background-image: url('../assets/park_selectedBtn.png');
+    background-size: 100% 100%;
+    background-color: rgba(240, 243, 246, 0.5);
+}
+
+#abutton:hover {
+    background-color: rgba(7, 127, 247, 0.5);
+}
+
 </style>

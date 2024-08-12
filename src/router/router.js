@@ -3,13 +3,18 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import loginView from "../components/login.vue";
 import mainView from "../components/mainSence.vue";
 import errorView from "../components/404.vue";
+import login2View from "../components/login2.vue";
 
 import {useUserStatusStore} from "../stores/userStatus";
 
 const routes = [
     {
         path: '/',
-        redirect: '/home',
+        redirect: '/login2',
+    },
+    {
+        path: '/login2',
+        component: login2View,
     },
     {
         path: "/login",

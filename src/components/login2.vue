@@ -1,16 +1,13 @@
 <template>
     <img id="img" :src="background" alt="">
     <div id="login">
-        <div id="title">起重机系统登录</div>
+        <div id="title">登录</div>
         <div class="input">
             <el-input v-model="userId" placeholder="请输入用户名" clearable prefix-icon="User" />
         </div>
-        <div class="input">
-            <el-input v-model="password" placeholder="请输入密码" type="password" clearable prefix-icon="Lock" show-password />
-        </div>
-        <el-button type="primary" @click="login">登录</el-button>
+        <el-button type="primary" @click="login">继续</el-button>
         <div v-if="showAlert" style="max-width: 600px">
-            <el-alert  :title="alertTitle" type="error" effect="dark" center :closable="false"/>
+            <el-alert :title="alertTitle" type="error" effect="dark" center :closable="false"/>
             <div class="close-button">
                 <el-button @click="closeAlert" size="small" icon="CircleClose"></el-button>
             </div>
@@ -31,8 +28,7 @@ import background from '../assets/loginBackground.jpg'
 const route = useRoute();
 const router = useRouter();
 
-const userId = ref('admin');
-const password = ref('');
+const userId = ref('');
 const showAlert = ref(false);
 const alertTitle = ref('');
 
@@ -43,25 +39,19 @@ function closeAlert() {
 function login() {
 
     const userStatus = useUserStatusStore();
-    if (password.value == '') {
-        alertTitle.value = "请输入密码";
+    if (userId.value == '') {
+        alertTitle.value = "请输入账号";
         showAlert.value = true;
     } else {
-        if (password.value === userStatus.user.password) {
-            ElMessage({
-                showClose: true,
-                message: '登陆成功',
-                type: 'success',
-            })
+        if (userId.value === userStatus.user.id) {
             userStatus.setUserStatus(true);
-            router.push('/home');
+            router.push('/login');
         }
         else {
-            alertTitle.value = "用户名或密码错误";
+            alertTitle.value = "用户不存在";
             showAlert.value = true;
         }
     }
-
 }
 
 </script>
@@ -115,7 +105,7 @@ function login() {
 
     .close-button {
         position: absolute;
-        top: 280px;
+        top: 220px;
         right: 350px;
         // background-color: rgb(213, 111, 131);
     }
